@@ -17,3 +17,7 @@ async def lifespan(app: FastAPI):
     ):
         yield
 
+
+@app.get("/hello")
+async def first_router():
+    return "Hello world"
