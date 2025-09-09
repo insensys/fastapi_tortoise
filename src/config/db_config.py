@@ -6,7 +6,8 @@ from tortoise import backends
 
 
 TORTOISE_ORM = {
-    "connections":{"default": db_settings.get_async_db_url, "replica": db_settings.get_async_db_url2},
+    "connections":{"default": db_settings.get_async_db_url, 
+                   "replica": db_settings.get_async_db_url2},
     "apps": {
         "models":{
             "models":["src.models"],
@@ -17,6 +18,7 @@ TORTOISE_ORM = {
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    generate_schemas=True
     async with RegisterTortoise(
         app = app,
         config = TORTOISE_ORM,
