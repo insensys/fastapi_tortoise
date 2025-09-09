@@ -7,12 +7,19 @@ class DBSettings(BaseSettings):
     USER:str 
     PASSWORD:str
     DB_NAME:str
+    DB_NAME2:str
 
     @property
     def get_async_db_url(self) -> str:
         return (
             f"asyncpg://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DB_NAME}"
             )
+
+    @property
+    def get_async_db_url2(self) ->str:
+        return(
+            f"asyncpg://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DB_NAME2}"
+        )
 
     model_config = SettingsConfigDict(
         env_file=(".env"),
@@ -21,13 +28,3 @@ class DBSettings(BaseSettings):
 
 
 db_settings = DBSettings()
-
-"""
-    HOST=localhost
-    PORT=5432
-    USER=localhost_user
-    PASSWORD:1234
-    DB_NAME:experimental
-
-asyncpg: asyncpg://postgres:pass@db.host:5432/somedb
-"""
