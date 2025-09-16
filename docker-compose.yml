@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      -"5672:5672"
+      -"15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER: guest
+      - RABBITMQ_DEFAULT_PASS: guest
+
+  
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  app:
+    build: 
+      context: .
+      dockerfile: src/dockerfile
+    depends_on:
+      - rabbitmq
+      - redis
+    volumes:
+      - ./src/app/src
+    ports:
+      - "8000:8000"
+
+  worker:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+    depends_on:
+      - rabbitmq
+      - redis
+    environment:
+      CELERY_APP: src.celery.celery
+      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672//
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes:
+      - ./src:/app/src
+    command: >
+      celery -A ${CELERY_APP} worker -l info
+      -b ${CELERY_BROKER_URL}
+      --result-backend ${CELERY_RESULT_BACKEND}
+
+
+  tests:
+    build: 
+      context:
+      dockerfile: tests/Dockerfile
+    depends_on:
+      - rabbitmq
+      - redis
+      - worker
+    environment:
+      - CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:1234//
+      - CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes:
+      - ./tests:tests
+      - ./src/tests/src
+      
