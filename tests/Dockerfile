@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r tests/requirements.txt
 COPY tests /tests
 COPY src /tests/src
 
-CMD["sleep", "infinity"]
+CMD ["sleep", "infinity"]

@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from src.config.app_config import db_settings
 from contextlib import asynccontextmanager
 from src.config.db_config import TORTOISE_ORM
 from tortoise.contrib.fastapi import RegisterTortoise
@@ -9,6 +8,7 @@ from fastapi.exceptions import HTTPException
 from tortoise import Tortoise
 import logging
 from src.routers.crud_router import crud_router
+from src.routers.invoice_router import invoice_router
 
 
 @asynccontextmanager
@@ -23,3 +23,4 @@ app = FastAPI(
 )
 
 app.include_router(crud_router)
+app.include_router(invoice_router)
